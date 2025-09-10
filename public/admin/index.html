@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Raffle Stars - Admin Panel</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+    <link rel="alternate icon" href="../assets/icons/favicon.ico">
+    <meta name="theme-color" content="#FF6B35">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Admin Color Palette */
+            --admin-primary: #FF6B35;
+            --admin-primary-dark: #E55A30;
+            --admin-secondary: #0088CC;
+            --admin-success: #00C853;
+            --admin-warning: #FFA726;
+            --admin-danger: #F44336;
+            --admin-info: #29B6F6;
+            
+            /* Neutral Colors */
+            --admin-white: #FFFFFF;
+            --admin-light: #F8F9FA;
+            --admin-gray-100: #F1F3F4;
+            --admin-gray-200: #E8EAED;
+            --admin-gray-300: #DADCE0;
+            --admin-gray-400: #BDC1C6;
+            --admin-gray-500: #9AA0A6;
+            --admin-gray-600: #80868B;
+            --admin-gray-700: #5F6368;
+            --admin-gray-800: #3C4043;
+            --admin-gray-900: #202124;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.12), 0 6px 10px rgba(0,0,0,0.08);
+            
+            /* Border Radius */
+            --border-radius-sm: 6px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 24px;
+        }
+        
+        /* Enhanced Navigation */
+        .navbar {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%) !important;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--admin-white) !important;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .navbar-brand i {
+            font-size: 1.5rem;
+            color: #FFD700;
+        }
+        
+        /* Enhanced Statistics Cards */
+        .stats-card {
+            border: none;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--admin-white);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--admin-primary), var(--admin-secondary));
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--admin-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--admin-gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stats-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            color: var(--admin-gray-300);
+            opacity: 0.3;
+        }
+        
+        /* Enhanced Sidebar */
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: calc(100vh - 56px);
+            box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            backdrop-filter: blur(10px);
+        }
+        
+        .sidebar .nav {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: var(--border-radius-sm);
+            margin: 4px 0;
+            padding: 12px 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .sidebar .nav-link i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Enhanced Main Content */
+        .main-content {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: calc(100vh - 56px);
+            position: relative;
+        }
+        
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 136, 204, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .main-content > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Enhanced Login Container */
+        .login-container {
+            max-width: 420px;
+            margin: 100px auto;
+        }
+        
+        .login-container .card {
+            border: none;
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .login-container .card-body {
+            padding: 2.5rem;
+        }
+        
+        .login-container .card-title {
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+        
+        .login-container .form-control {
+            border: 2px solid var(--admin-gray-200);
+            border-radius: var(--border-radius-sm);
+            padding: 12px 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .login-container .form-control:focus {
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+        
+        /* Enhanced Table Container */
+        .table-container {
+            background: var(--admin-white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        .table-container .card-header {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%) !important;
+            border: none;
+            padding: 1.5rem;
+        }
+        
+        .table-container .card-header h5 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .table-container .card-header i {
+            font-size: 1.25rem;
+        }
+        
+        .table-container .table {
+            margin-bottom: 0;
+        }
+        
+        .table-container .table th {
+            border-top: none;
+            background: var(--admin-gray-100);
+            color: var(--admin-gray-700);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+        }
+        
+        .table-container .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--admin-gray-200);
+        }
+        
+        .table-container .table tbody tr:hover {
+            background-color: var(--admin-gray-100);
+        }
+        
+        /* Enhanced Badges */
+        .badge {
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.75rem;
+            letter-spacing: 0.25px;
+        }
+        
+        .badge-success { 
+            background: linear-gradient(135deg, var(--admin-success) 0%, #00A845 100%);
+            color: white;
+        }
+        .badge-warning { 
+            background: linear-gradient(135deg, var(--admin-warning) 0%, #FF9800 100%);
+            color: white;
+        }
+        .badge-danger { 
+            background: linear-gradient(135deg, var(--admin-danger) 0%, #D32F2F 100%);
+            color: white;
+        }
+        .badge-info { 
+            background: linear-gradient(135deg, var(--admin-info) 0%, #0288D1 100%);
+            color: white;
+        }
+        
+        /* Enhanced Forms */
+        .form-control {
+            border: 2px solid var(--admin-gray-200);
+            border-radius: var(--border-radius-sm);
+            transition: all 0.2s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+        
+        .form-select:focus {
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+        
+        /* Enhanced Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--admin-primary-dark) 0%, #D14D26 100%);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-outline-light {
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        /* Section Headers */
+        .content-section h2 {
+            font-weight: 700;
+            color: var(--admin-gray-800);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+        
+        .content-section h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-secondary) 100%);
+            border-radius: 2px;
+        }
+        
+        /* Responsive Enhancements */
+        @media (max-width: 768px) {
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+            
+            .sidebar {
+                position: fixed;
+                top: 56px;
+                left: -100%;
+                width: 280px;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            
+            .sidebar.show {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#dashboard">
+                <i class="bi bi-star-fill"></i> Raffle Stars Admin
+            </a>
+            <div class="navbar-nav ms-auto" id="userInfo" style="display: none;">
+                <span class="navbar-text me-3" id="adminName"></span>
+                <button class="btn btn-outline-light btn-sm" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Form -->
+    <div id="loginForm" class="container">
+        <div class="login-container">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">
+                        <i class="bi bi-shield-lock text-primary"></i>
+                        Admin Login
+                    </h3>
+                    <form onsubmit="login(event)">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                    <div id="loginError" class="alert alert-danger mt-3" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminPanel" style="display: none;">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-2 p-0">
+                    <div class="sidebar p-3">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#dashboard" onclick="showSection('dashboard')">
+                                    <i class="bi bi-speedometer2"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#raffles" onclick="showSection('raffles')">
+                                    <i class="bi bi-gift"></i> Raffles
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#users" onclick="showSection('users')">
+                                    <i class="bi bi-people"></i> Users
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#transactions" onclick="showSection('transactions')">
+                                    <i class="bi bi-currency-exchange"></i> Transactions
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#settings" onclick="showSection('settings')">
+                                    <i class="bi bi-gear"></i> Settings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#audit" onclick="showSection('audit')">
+                                    <i class="bi bi-file-text"></i> Audit Logs
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-md-10 main-content p-4">
+                    <!-- Dashboard Section -->
+                    <div id="dashboardSection" class="content-section">
+                        <h2 class="mb-4">Dashboard</h2>
+                        
+                        <!-- Enhanced Stats Cards -->
+                        <div class="row mb-4" id="statsCards">
+                            <!-- Enhanced stats cards will be populated by JavaScript -->
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body position-relative">
+                                        <i class="bi bi-people stats-icon"></i>
+                                        <div class="stats-number" id="totalUsersCard">0</div>
+                                        <div class="stats-label">Total Users</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body position-relative">
+                                        <i class="bi bi-gift stats-icon"></i>
+                                        <div class="stats-number" id="activeRafflesCard">0</div>
+                                        <div class="stats-label">Active Raffles</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body position-relative">
+                                        <i class="bi bi-star-fill stats-icon"></i>
+                                        <div class="stats-number" id="totalStarsCard">0</div>
+                                        <div class="stats-label">Stars Processed</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body position-relative">
+                                        <i class="bi bi-graph-up stats-icon"></i>
+                                        <div class="stats-number" id="revenueCard">0</div>
+                                        <div class="stats-label">Revenue Today</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-container">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Transactions</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped" id="recentTransactionsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>User</th>
+                                                        <th>Amount</th>
+                                                        <th>Type</th>
+                                                        <th>Status</th>
+                                                        <th>Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="recentTransactionsBody">
+                                                    <!-- Populated by JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Raffles Section -->
+                    <div id="rafflesSection" class="content-section" style="display: none;">
+                        <h2 class="mb-4">Raffles Management</h2>
+                        <div class="table-container">
+                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="bi bi-gift"></i> All Raffles</h5>
+                                <div>
+                                    <select class="form-select form-select-sm text-dark" id="raffleStatusFilter" onchange="loadRaffles()">
+                                        <option value="all">All Status</option>
+                                        <option value="active">Active</option>
+                                        <option value="completed">Completed</option>
+                                        <option value="cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Participants</th>
+                                                <th>Total Pot</th>
+                                                <th>Status</th>
+                                                <th>Winner</th>
+                                                <th>Created</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rafflesTableBody">
+                                            <!-- Populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Section -->
+                    <div id="usersSection" class="content-section" style="display: none;">
+                        <h2 class="mb-4">Users Management</h2>
+                        <div class="table-container">
+                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="bi bi-people"></i> All Users</h5>
+                                <div>
+                                    <input type="text" class="form-control form-control-sm" placeholder="Search users..." id="userSearchInput" onkeyup="searchUsers()">
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Telegram ID</th>
+                                                <th>Name</th>
+                                                <th>Username</th>
+                                                <th>Total Bids</th>
+                                                <th>Wins</th>
+                                                <th>Winnings</th>
+                                                <th>Spent</th>
+                                                <th>Last Active</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="usersTableBody">
+                                            <!-- Populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transactions Section -->
+                    <div id="transactionsSection" class="content-section" style="display: none;">
+                        <h2 class="mb-4">Transactions</h2>
+                        <div class="table-container">
+                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="bi bi-currency-exchange"></i> All Transactions</h5>
+                                <div class="d-flex gap-2">
+                                    <select class="form-select form-select-sm text-dark" id="transactionTypeFilter" onchange="loadTransactions()">
+                                        <option value="all">All Types</option>
+                                        <option value="bet">Bets</option>
+                                        <option value="win">Wins</option>
+                                        <option value="refund">Refunds</option>
+                                        <option value="fee">Fees</option>
+                                    </select>
+                                    <select class="form-select form-select-sm text-dark" id="transactionStatusFilter" onchange="loadTransactions()">
+                                        <option value="all">All Status</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="confirmed">Confirmed</option>
+                                        <option value="failed">Failed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>User</th>
+                                                <th>Amount</th>
+                                                <th>Type</th>
+                                                <th>Status</th>
+                                                <th>Raffle</th>
+                                                <th>Created</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="transactionsTableBody">
+                                            <!-- Populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div id="settingsSection" class="content-section" style="display: none;">
+                        <h2 class="mb-4">Raffle Settings</h2>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="card shadow">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0"><i class="bi bi-gear"></i> Configuration</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form onsubmit="updateSettings(event)">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="participantsLimit" class="form-label">Participants Limit</label>
+                                                        <input type="number" class="form-control" id="participantsLimit" min="2" max="1000" required>
+                                                        <small class="form-text text-muted">Number of participants needed to complete a raffle</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="betAmount" class="form-label">Bet Amount (Stars)</label>
+                                                        <input type="number" class="form-control" id="betAmount" min="1" max="100" required>
+                                                        <small class="form-text text-muted">Cost per bet in Telegram Stars</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="winnerPercentage" class="form-label">Winner Percentage (%)</label>
+                                                        <input type="number" class="form-control" id="winnerPercentage" min="1" max="99" required>
+                                                        <small class="form-text text-muted">Percentage of pot that goes to winner</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="organizerPercentage" class="form-label">Organizer Percentage (%)</label>
+                                                        <input type="number" class="form-control" id="organizerPercentage" min="1" max="99" required>
+                                                        <small class="form-text text-muted">Percentage of pot that goes to organizer</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Update Settings</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audit Logs Section -->
+                    <div id="auditSection" class="content-section" style="display: none;">
+                        <h2 class="mb-4">Audit Logs</h2>
+                        <div class="table-container">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="bi bi-file-text"></i> System Audit Trail</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Admin User</th>
+                                                <th>Action</th>
+                                                <th>Target</th>
+                                                <th>Details</th>
+                                                <th>IP Address</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="auditLogsBody">
+                                            <!-- Populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

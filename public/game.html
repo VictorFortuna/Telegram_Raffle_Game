@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Telegram Raffle Stars</title>
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    <link rel="alternate icon" href="assets/icons/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Raffle Stars">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Telegram Raffle Stars">
+    <meta property="og:description" content="Play exciting raffle games with Telegram Stars. Win big in our fair and transparent raffle system!">
+    <meta property="og:image" content="assets/icons/game-icon.svg">
+    <meta property="og:type" content="website">
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* CSS Custom Properties for Telegram Theme Support */
+        :root {
+            /* Telegram WebApp Theme Variables */
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-text-color: #000000;
+            --tg-theme-hint-color: #999999;
+            --tg-theme-link-color: #2481cc;
+            --tg-theme-button-color: #40a7e3;
+            --tg-theme-button-text-color: #ffffff;
+            --tg-theme-secondary-bg-color: #f1f1f1;
+            
+            /* Custom Design System Colors */
+            --primary-orange: #FF6B35;
+            --primary-orange-hover: #FF8C42;
+            --primary-orange-active: #E55A30;
+            --telegram-blue: #0088CC;
+            --telegram-green: #00C853;
+            --warning-red: #F44336;
+            --success-green: #4CAF50;
+            
+            /* Typography Scale */
+            --font-size-headline: 24px;
+            --font-size-title: 20px;
+            --font-size-body: 14px;
+            --font-size-caption: 18px;
+            --font-size-small: 12px;
+            
+            /* Spacing System */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 20px;
+            --spacing-xxl: 24px;
+            
+            /* Border Radius */
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+            --border-radius-circle: 50%;
+            
+            /* Shadow System */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+            --shadow-orange: 0 8px 25px rgba(255, 107, 53, 0.4);
+            --shadow-orange-hover: 0 12px 30px rgba(255, 107, 53, 0.5);
+        }
+        
+        /* Dark theme support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --tg-theme-bg-color: #212121;
+                --tg-theme-text-color: #ffffff;
+                --tg-theme-hint-color: #708499;
+                --tg-theme-link-color: #6ab7ff;
+                --tg-theme-button-color: #5288c1;
+                --tg-theme-button-text-color: #ffffff;
+                --tg-theme-secondary-bg-color: #0f0f0f;
+            }
+        }
+        
+        /* Reset and Base Styles */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
+                         Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            background: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            font-size: var(--font-size-body);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Main Container Layout */
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: var(--spacing-xl);
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        /* Top Status Section */
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            padding: var(--spacing-lg) 0;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--font-size-caption);
+            font-weight: 500;
+            color: var(--tg-theme-text-color);
+            transition: color 0.3s ease;
+        }
+        
+        .stat-icon {
+            font-size: var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--spacing-xxl);
+            height: var(--spacing-xxl);
+        }
+        
+        .stat-icon.star {
+            color: #FFA500;
+        }
+        
+        .stat-icon.users {
+            color: var(--telegram-blue);
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            font-size: var(--font-size-caption);
+        }
+        
+        /* Center Section - Main BID Button */
+        .center-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh * 0.33); /* Approximately 1/3 of screen height */
+            padding: var(--spacing-xl) 0;
+        }
+        
+        .bid-button {
+            /* Responsive sizing - 1/3 of screen height with constraints */
+            width: min(220px, calc(100vh * 0.25));
+            height: min(220px, calc(100vh * 0.25));
+            max-width: 250px;
+            max-height: 250px;
+            min-width: 180px;
+            min-height: 180px;
+            
+            /* Visual Design */
+            border-radius: var(--border-radius-circle);
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-hover));
+            border: none;
+            color: white;
+            font-size: var(--font-size-headline);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            
+            /* Layout */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-sm);
+            position: relative;
+            
+            /* Interactions & Animation */
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-orange);
+            
+            /* Touch optimization */
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* BID Button Interactive States */
+        .bid-button:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-orange-hover);
+            background: linear-gradient(135deg, var(--primary-orange-hover), #FF9A52);
+        }
+        
+        .bid-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+            background: linear-gradient(135deg, var(--primary-orange-active), var(--primary-orange));
+        }
+        
+        .bid-button:disabled {
+            background: #CCCCCC !important;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+            opacity: 0.6;
+        }
+        
+        .bid-button:focus-visible {
+            outline: 3px solid rgba(255, 107, 53, 0.5);
+            outline-offset: 2px;
+        }
+        
+        .bet-amount {
+            font-size: calc(var(--font-size-caption) - 2px);
+            font-weight: 400;
+            opacity: 0.95;
+            letter-spacing: 0.5px;
+        }
+        
+        .bid-text {
+            font-size: var(--font-size-headline);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        /* Progress Indicator */
+        .progress-container {
+            width: 100%;
+            max-width: 320px;
+            margin-top: var(--spacing-xxl);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--tg-theme-secondary-bg-color);
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-green), #45a049);
+            border-radius: var(--border-radius-sm);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: var(--spacing-md);
+            font-size: var(--font-size-body);
+            color: var(--tg-theme-hint-color);
+            font-weight: 500;
+        }
+        
+        /* Bottom Statistics Section */
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+            padding: var(--spacing-lg) 0;
+            min-height: 80px;
+        }
+        
+        .bottom-stat {
+            text-align: center;
+            padding: var(--spacing-md);
+            background: var(--tg-theme-secondary-bg-color);
+            border-radius: var(--border-radius-md);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bottom-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--telegram-blue);
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+        
+        .bottom-stat:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .bottom-stat:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .bottom-stat-icon {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-xs);
+            color: var(--telegram-blue);
+        }
+        
+        .bottom-stat-value {
+            font-size: var(--font-size-title);
+            font-weight: 700;
+            color: var(--tg-theme-text-color);
+            margin-bottom: var(--spacing-xs);
+            transition: color 0.3s ease;
+        }
+        
+        .bottom-stat-value.updated {
+            color: var(--tg-theme-link-color);
+            animation: flash 0.5s ease;
+        }
+        
+        .bottom-stat-label {
+            font-size: var(--font-size-small);
+            color: var(--tg-theme-hint-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        
+        .rules-button {
+            background: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            font-size: var(--font-size-body);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-xs);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .rules-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+        
+        .rules-button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .rules-button:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .rules-button:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .rules-icon {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .rules-text {
+            font-size: var(--font-size-small);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        /* Loading and Status States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        /* Animation Keyframes */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .status-message {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateY(-100px);
+            transition: transform 0.3s ease;
+        }
+        
+        .status-message.show {
+            transform: translateY(0);
+        }
+        
+        .status-success {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .status-error {
+            background: #f44336;
+            color: white;
+        }
+        
+        .status-info {
+            background: var(--tg-theme-button-color, #3390ec);
+            color: white;
+        }
+        
+        /* Winner Announcement */
+        .winner-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .winner-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .winner-content {
+            background: var(--tg-theme-bg-color, #ffffff);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            max-width: 300px;
+            width: 100%;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+        }
+        
+        .winner-modal.show .winner-content {
+            transform: scale(1);
+        }
+        
+        .winner-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .winner-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--tg-theme-text-color, #222222);
+        }
+        
+        .winner-amount {
+            font-size: 32px;
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 20px;
+        }
+        
+        .winner-close {
+            background: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        /* Responsive Design - Mobile First */
+        
+        /* Extra small devices (portrait phones, less than 350px) */
+        @media (max-width: 349px) {
+            .container {
+                padding: var(--spacing-lg);
+            }
+            
+            .bid-button {
+                min-width: 160px;
+                min-height: 160px;
+                font-size: var(--font-size-title);
+            }
+            
+            .bottom-section {
+                gap: var(--spacing-sm);
+            }
+            
+            .bottom-stat {
+                padding: var(--spacing-sm);
+            }
+            
+            .bottom-stat-value {
+                font-size: var(--font-size-caption);
+            }
+        }
+        
+        /* Small devices (landscape phones, 350px and up) */
+        @media (min-width: 350px) {
+            .bid-button {
+                width: min(200px, calc(100vh * 0.23));
+                height: min(200px, calc(100vh * 0.23));
+            }
+        }
+        
+        /* Medium devices (tablets, 576px and up) */
+        @media (min-width: 576px) {
+            .container {
+                max-width: 480px;
+                padding: var(--spacing-xxl);
+            }
+            
+            .bottom-section {
+                gap: var(--spacing-lg);
+            }
+        }
+        
+        /* Large devices (desktops, 768px and up) */
+        @media (min-width: 768px) {
+            .bid-button {
+                max-width: 250px;
+                max-height: 250px;
+                font-size: calc(var(--font-size-headline) + 2px);
+            }
+            
+            .container {
+                padding: var(--spacing-xxl) var(--spacing-xl);
+            }
+        }
+        
+        /* Height-based responsive adjustments */
+        @media (min-height: 700px) {
+            .bid-button {
+                width: min(240px, calc(100vh * 0.25));
+                height: min(240px, calc(100vh * 0.25));
+            }
+            
+            .center-section {
+                min-height: calc(100vh * 0.35);
+            }
+        }
+        
+        @media (min-height: 800px) {
+            .bid-button {
+                width: min(250px, calc(100vh * 0.25));
+                height: min(250px, calc(100vh * 0.25));
+                font-size: calc(var(--font-size-headline) + 2px);
+            }
+        }
+        
+        /* Landscape orientation adjustments */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .container {
+                padding: var(--spacing-md);
+            }
+            
+            .bid-button {
+                width: min(160px, calc(100vh * 0.3));
+                height: min(160px, calc(100vh * 0.3));
+                font-size: var(--font-size-title);
+            }
+            
+            .center-section {
+                min-height: auto;
+            }
+            
+            .top-section {
+                height: 50px;
+                margin-bottom: var(--spacing-md);
+            }
+            
+            .progress-container {
+                margin-top: var(--spacing-lg);
+                margin-bottom: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Status Section -->
+        <div class="top-section">
+            <div class="stat-item">
+                <span class="stat-icon star" aria-label="Your stars">⭐</span>
+                <span class="stat-value" id="playerStars">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon users" aria-label="Active players">👥</span>
+                <span class="stat-value" id="activePlayers" aria-live="polite">0/10</span>
+            </div>
+        </div>
+        
+        <!-- Center Section - Main BID Button -->
+        <div class="center-section">
+            <button 
+                id="bidButton" 
+                class="bid-button" 
+                onclick="placeBet()"
+                aria-label="Place bid of 1 Telegram Star"
+                role="button"
+                tabindex="0"
+            >
+                <div class="bid-text">BID</div>
+                <div class="bet-amount">1 ⭐</div>
+            </button>
+            
+            <div class="progress-container">
+                <div class="progress-bar" role="progressbar" aria-label="Raffle progress">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <div id="progressText" class="progress-text" aria-live="polite">0 / 10 participants</div>
+            </div>
+        </div>
+        
+        <!-- Bottom Statistics Section -->
+        <div class="bottom-section">
+            <div class="bottom-stat" role="status" aria-live="polite">
+                <div class="bottom-stat-icon">⭐</div>
+                <div id="playerStarsBottom" class="bottom-stat-value" aria-label="Your star balance">0</div>
+                <div class="bottom-stat-label">Stars</div>
+            </div>
+            <div class="bottom-stat" role="status" aria-live="polite">
+                <div class="bottom-stat-icon">👥</div>
+                <div id="activePlayersBottom" class="bottom-stat-value" aria-label="Active players count">0</div>
+                <div class="bottom-stat-label">Active</div>
+            </div>
+            <div class="bottom-stat" role="status">
+                <div class="bottom-stat-icon">📊</div>
+                <div id="totalUsers" class="bottom-stat-value" aria-label="Total registered users">0</div>
+                <div class="bottom-stat-label">Total</div>
+            </div>
+            <button class="rules-button" onclick="showRules()" aria-label="View game rules">
+                <div class="rules-icon">📖</div>
+                <div class="rules-text">Rules</div>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Status Message -->
+    <div id="statusMessage" class="status-message"></div>
+    
+    <!-- Winner Modal -->
+    <div id="winnerModal" class="winner-modal">
+        <div class="winner-content">
+            <div class="winner-icon">🎉</div>
+            <div id="winnerTitle" class="winner-title">Congratulations!</div>
+            <div id="winnerAmount" class="winner-amount">0 ⭐</div>
+            <div id="winnerMessage" style="margin-bottom: 20px; color: var(--tg-theme-hint-color, #999999);">
+                You won the raffle!
+            </div>
+            <button class="winner-close" onclick="closeWinnerModal()">Continue Playing</button>
+        </div>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="assets/js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="256" fill="url(#backgroundGradient)"/>
+  
+  <!-- Inner Circle with Shadow -->
+  <circle cx="256" cy="256" r="200" fill="url(#innerGradient)" opacity="0.9"/>
+  
+  <!-- Star Shape -->
+  <path d="M256 120L275.528 192.472H348L289.736 235.056L309.264 307.528L256 264.944L202.736 307.528L222.264 235.056L164 192.472H236.472L256 120Z" 
+        fill="#FFD700" 
+        stroke="#FFA500" 
+        stroke-width="4"/>
+  
+  <!-- Inner Star Highlight -->
+  <path d="M256 140L270.764 195.236H326L282.618 228.382L297.382 283.618L256 250.472L214.618 283.618L229.382 228.382L186 195.236H241.236L256 140Z" 
+        fill="#FFED4E" 
+        opacity="0.8"/>
+  
+  <!-- Sparkle Effects -->
+  <circle cx="180" cy="180" r="8" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="332" cy="180" r="6" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="180" cy="332" r="6" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="332" cy="332" r="8" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="150" cy="256" r="4" fill="#FFFFFF" opacity="0.5"/>
+  <circle cx="362" cy="256" r="4" fill="#FFFFFF" opacity="0.5"/>
+  
+  <!-- Small Stars -->
+  <g fill="#FFED4E" opacity="0.7">
+    <path d="M120 200L125 210H135L127 216L132 226L120 220L108 226L113 216L105 210H115L120 200Z"/>
+    <path d="M392 312L397 322H407L399 328L404 338L392 332L380 338L385 328L377 322H387L392 312Z"/>
+    <path d="M380 150L385 160H395L387 166L392 176L380 170L368 176L373 166L365 160H375L380 150Z"/>
+    <path d="M132 362L137 372H147L139 378L144 388L132 382L120 388L125 378L117 372H127L132 362Z"/>
+  </g>
+  
+  <!-- Text "RAFFLE" -->
+  <text x="256" y="400" font-family="system-ui, -apple-system, sans-serif" font-weight="bold" font-size="32" 
+        text-anchor="middle" fill="#FFFFFF" stroke="#FF6B35" stroke-width="1">RAFFLE</text>
+  
+  <!-- Text "STARS" -->
+  <text x="256" y="430" font-family="system-ui, -apple-system, sans-serif" font-weight="bold" font-size="24" 
+        text-anchor="middle" fill="#FFFFFF" opacity="0.9">STARS</text>
+  
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E55A30;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="innerGradient" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+</svg>
