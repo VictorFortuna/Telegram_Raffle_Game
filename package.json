@@ -21,8 +21,7 @@
     "deploy:check": "node scripts/deploy-check.js",
     "deploy:quick": "node scripts/deploy-check.js quick",
     "logs:stats": "node -e \"console.log(JSON.stringify(require('./utils/logger').getLogStats(), null, 2))\"",
-    "logs:search": "node -e \"const logger = require('./utils/logger'); console.log(JSON.stringify(logger.searchLogs(process.argv[1] || 'error'), null, 2))\"",
-    "postinstall": "npm run migrate"
+    "logs:search": "node -e \"const logger = require('./utils/logger'); console.log(JSON.stringify(logger.searchLogs(process.argv[1] || 'error'), null, 2))\""
   },
   "keywords": ["telegram", "raffle", "stars", "html5", "game"],
   "author": "Telegram Raffle Stars Team",
